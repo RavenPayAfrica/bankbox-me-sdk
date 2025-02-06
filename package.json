@@ -1,7 +1,7 @@
 {
-  "name": "atlas-pay-sdk",
+  "name": "bankbox-me-sdk",
   "version": "2.0.6",
-  "description": "Raven Atlas NodeJS Payment SDK",
+  "description": "Raven Bankbox JS Payment SDK",
   "keywords": [
     "raven",
     "checkout",
@@ -39,9 +39,9 @@
   "types": "./types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RavenPayAfrica/atlas-webpay-node-sdk.git"
+    "url": "https://github.com/RavenPayAfrica/bankbox-me-sdk.git"
   },
-  "homepage": "https://ravenpayafrica.github.io/atlas-webpay-node-sdk/",
+  "homepage": "https://ravenpayafrica.github.io/bankbox-me-sdk/",
   "author": "Ezeani Emmanuel <emmanuel.ezeani@getravenbank.com>",
   "license": "MIT",
   "engines": {
