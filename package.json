@@ -1,6 +1,6 @@
 {
-  "name": "bankbox-me-sdk",
-  "version": "0.0.2",
+  "name": "@ravenpay/bankbox-me-sdk",
+  "version": "0.0.3",
   "description": "Raven Bankbox JS Payment SDK",
   "keywords": [
     "raven",
