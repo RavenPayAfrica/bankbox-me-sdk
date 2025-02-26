@@ -36,7 +36,7 @@
   "main": "./bundles/index.cjs.js",
   "module": "./bundles/index.esm.js",
   "browser": "./index.min.js",
-  "types": "./types/manager.d.ts",
+  "types": "./types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/RavenPayAfrica/bankbox-me-sdk.git"
