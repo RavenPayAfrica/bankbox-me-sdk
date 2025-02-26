@@ -300,7 +300,10 @@ class BankboxManager {
     this.initializeListeners();
 
     setTimeout(() => {
-      this.initPayment(options);
+
+      if(!this.paymentOption.amount){
+        this.initPayment(options);
+      }
     }, 1000);
 
     return {isBluethoothConnected: this.isBluethoothConnected}
@@ -393,6 +396,9 @@ class BankboxManager {
     eventWorker.emit(this.constants.event_hook, null);
 
     this.iframe = null;
+    this.container = null;
+    this.config = {};
+    this.appName = '';
     this.isInitialized = false;
   }
 }

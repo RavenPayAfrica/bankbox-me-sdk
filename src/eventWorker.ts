@@ -14,10 +14,14 @@ class EventWorker extends EventTarget {
     const event = new CustomEvent(type, { detail: data });
     this.dispatchEvent(event);
 
-    // Send message to the parent or iframe
-    const target = this.isIframe ? window.parent : this.broadcastToIframes();
-    target?.postMessage({ type, data }, "*");
+    // Send message to the parent if in an iframe, else send to all iframes
+    if (this.isIframe) {
+      window.parent.postMessage({ type, data }, "*");
+    } else {
+      this.broadcastToIframes(type, data);
+    }
   }
+
 
   subscribe(key: string, callback: (event: CustomEvent) => void): void {
     const eventHandler = (e: CustomEvent) => {
@@ -37,14 +41,12 @@ class EventWorker extends EventTarget {
     });
   }
 
-  private broadcastToIframes(): Window | null {
+  private broadcastToIframes(type: string, data: any): void {
     const iframes = document.querySelectorAll("iframe");
     iframes.forEach((iframe) => {
-      iframe.contentWindow?.postMessage({ type: "custom-event", data: "Hello iframe" }, "*");
+      iframe.contentWindow?.postMessage({ type, data }, "*");
     });
-    return null;
   }
-
   private setupClearInterval(): void {
     setInterval(() => {
       this.handledEvents.clear();

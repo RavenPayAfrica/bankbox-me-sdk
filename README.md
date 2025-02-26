@@ -1,172 +1,276 @@
-# @ravenpay/bankbox-me-sdk
+# Bankbox SDK Documentation
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Core Concepts](#core-concepts)
+  - [BankboxManager](#bankboxmanager)
+  - [Event System](#event-system)
+- [API Reference](#api-reference)
+  - [BankboxManager Configuration](#bankboxmanager-configuration)
+  - [Methods](#methods)
+  - [Events](#events)
+- [Troubleshooting](#troubleshooting)
 
 ## Introduction
 
-`@ravenpay/bankbox-me-sdk` is a JavaScript SDK designed to seamlessly integrate the Bankbox payment widget into web applications. This SDK allows developers to embed and manage the Bankbox widget for handling transactions with customizable configurations.
+Bankbox Me SDK is a flexible payment integration solution that allows you to seamlessly embed payment functionality into your web applications. It provides a simple API for initializing payment widgets, handling payment flows, and managing the payment experience for your users.
 
 ## Installation
 
-Install the SDK via npm:
-
-```sh
+```bash
+# Using npm
 npm install @ravenpay/bankbox-me-sdk
-```
 
-Or using yarn:
-
-```sh
+# Using yarn
 yarn add @ravenpay/bankbox-me-sdk
 ```
 
-## Usage
+## Quick Start
 
-### Importing the SDK
+Here's a basic implementation to get started with Bankbox SDK:
 
-```javascript
-import BankboxManager from '@ravenpay/bankbox-me-sdk';
+```jsx
+import React from 'react'
+import BankboxManager from '@ravenpay/bankbox-me-sdk'
+
+const PaymentComponent = () => {
+  // Initialize the Bankbox manager
+  const bankbox = new BankboxManager({
+    appName: 'your-app-name',
+    environment: 'production', // or 'development'
+    widgetOptions: {
+      isPersistent: true,
+    },
+    onSuccess: (data) => {
+      console.log('Payment succeeded:', data)
+    },
+    onLoad: () => {
+      console.log('Bankbox is ready')
+    },
+    onError: (error) => {
+      console.error('An error occurred:', error)
+    },
+  })
+
+  // Function to initiate payment
+  const handlePayment = () => {
+    bankbox.open({
+      amount: 1000, // Amount in smallest currency unit
+    })
+  }
+
+  return (
+    <div>
+      <button onClick={handlePayment}>Pay Now</button>
+
+      <button
+        onClick={() =>
+          alert(
+            `Bankbox is ${
+              bankbox.isBluethoothConnected ? 'connected' : 'disconnected'
+            }`
+          )
+        }
+      >
+        Check Connection Status
+      </button>
+    </div>
+  )
+}
+
+export default PaymentComponent
 ```
 
-### Initializing the SDK
+### Legacy CRA
 
-Create an instance of `BankboxManager` with the required configuration:
+If you encounter issues running the SDK with create-react-app (CRA), which has become obsolete, you can use the following approach. This method accesses the bundle file directly, bypassing React auto-import.
 
-```javascript
-const bankbox = new BankboxManager({
-  appName: 'your-app-name',
-  environment: 'sandbox', // or 'production' only production supported, you can leave blank for production
-  // widgetOptions: {},
-  containerId: 'bankbox-container' //optional,
-  onSuccess: (data) => console.log('Transaction Successful:', data),
-  onFail: (data) => console.log('Transaction Failed:', data),
-  onError: (error) => console.error('Error:', error),
-  onLoad: () => console.log('Bankbox Loaded'),
-});
+Here's a basic implementation to get started with Bankbox SDK:
+
+```jsx
+import React from 'react'
+import BankboxManager from '@ravenpay/bankbox-me-sdk/bundles/index.esm.js'
+
+// The rest of the implementation follows...
 ```
 
-### Mounting the Widget
+## Core Concepts
 
-To mount the Bankbox widget inside a specific container:
+### BankboxManager
 
-```javascript
-bankbox.mount({
-  email: 'user@example.com',
-  amount: 1000,
-  containerId: 'custom-container-id',
-});
-```
+The `BankboxManager` is the main entry point for the SDK. It handles initialization, configuration, and provides methods to control the payment flow.
 
-### Opening the Widget
+### Event System
 
-To display the Bankbox widget as an overlay:
+Bankbox uses an event system to handle communication between your application and the payment widget. This enables you to receive updates and send data to the payment flow.
 
-```javascript
-bankbox.open({
-  email: 'user@example.com',
-  amount: 1000,
-});
-```
+## API Reference
 
-### Closing the Widget
+### BankboxManager Configuration
 
-To close the Bankbox widget manually:
+When initializing the `BankboxManager`, you can provide the following configuration options:
 
-```javascript
-bankbox.close();
-```
+| Option          | Type     | Description                          | Required | Default |
+| --------------- | -------- | ------------------------------------ | -------- | ------- |
+| `appName`       | string   | Your application's identifier        | Yes      | -       |
+| `environment`   | string   | 'development' or 'production'        | Yes      | -       |
+| `containerId`   | string   | ID of the container element          | No       | -       |
+| `widgetOptions` | object   | Configuration for the payment widget | No       | `{}`    |
+| `onSuccess`     | function | Callback when payment succeeds       | No       | -       |
+| `onLoad`        | function | Callback when widget loads           | No       | -       |
+| `onFail`        | function | Callback when payment fails          | No       | -       |
+| `onError`       | function | Callback when an error occurs        | No       | -       |
 
-### Event Listeners
+#### Widget Options
 
-You can listen to various events using event listeners:
+| Option          | Type    | Description                        | Default |
+| --------------- | ------- | ---------------------------------- | ------- |
+| `isPersistent`  | boolean | Keep widget instance after closure | `false` |
+| `theme`         | string  | 'light' or 'dark'                  | 'light' |
+| `paymentMethod` | string  | Default payment method             | -       |
 
-```javascript
-bankbox.addEventListener('success', (data) => {
-  console.log('Transaction Successful:', data);
-});
+### Methods
 
-bankbox.addEventListener('fail', (data) => {
-  console.log('Transaction Failed:', data);
-});
+#### `open(options)`
 
-bankbox.addEventListener('error', (error) => {
-  console.error('Error:', error);
-});
-```
+Opens the payment widget with the specified options.
 
-To remove an event listener:
+**Parameters:**
+
+- `options` (object):
+  - `amount` (number): The payment amount in the smallest currency unit
+
+**Returns:** Boolean - `true` if the widget was opened successfully, `false` otherwise
 
 ```javascript
-bankbox.removeEventListener('success', callbackFunction);
+const opened = bankbox.open({ amount: 1000 })
+if (opened) {
+  console.log('Payment widget opened successfully')
+}
 ```
 
-### Destroying the Widget
+#### `close()`
 
-To completely remove the Bankbox instance and clean up event listeners:
+Closes the payment widget.
 
 ```javascript
-bankbox.destroy();
+bankbox.close()
 ```
 
-## Configuration Options
+#### `isBluethoothConnected`
 
-| Property       | Type       | Description |
-|---------------|------------|-------------|
-| `appName`      | `string`   | Your application name |
-| `environment`  | `'sandbox' | 'production'` | The environment for transactions |
-| `widgetOptions` | `object`  | Additional configuration options for the widget |
-| `containerId`  | `string`   | ID of the container element for embedding the widget |
-| `onSuccess`    | `function` | Callback triggered on successful transactions |
-| `onFail`      | `function`  | Callback triggered on failed transactions |
-| `onError`     | `function`  | Callback triggered on widget errors |
-| `onLoad`      | `function`  | Callback triggered when the widget loads |
+Checks if the SDK is properly connected and ready to use, this value returns a boolean.
 
-## Events
+**Returns:** Boolean - `true` if connected, `false` otherwise
 
-| Event Type | Description |
-|------------|-------------|
-| `success`  | Triggered when a transaction is successful |
-| `fail`     | Triggered when a transaction fails |
-| `error`    | Triggered when an error occurs in the widget |
-| `load`     | Triggered when the widget loads |
+```javascript
+if (bankbox.isBluethoothConnected) {
+  console.log('Bankbox is connected and ready')
+} else {
+  console.log('Bankbox is not connected yet')
+}
+```
 
+### Events
 
-## Styling Notes
-The default container includes:
-- Semi-transparent overlay with blur effect
-- Bottom-mounted modal with rounded corners
-- Close button styled with black background
-- Responsive iframe sizing
+The SDK allows you to handle various payment events:
 
-Override styles by:
-- Providing your own container element
-- Adding custom CSS rules targeting `#bankbox-container`
+#### Available Events
 
-## Security Considerations
-- Uses `postMessage` with strict origin validation
-- Ensure your domain is whitelisted for production use
-- Never expose API keys in client-side code
+The SDK provides constants for common events that you can listen for in your callbacks:
 
-## Browser Support
-Modern browsers (Chrome 80+, Firefox 72+, Safari 13+). Requires:
-- ES6 support
-- Promise API
-- `postMessage` API
+- `onSuccess`: Called when payment completes successfully
+- `onFail`: Called when payment fails
+- `onError`: Called when an error occurs
+- `onLoad`: Called when the Bankbox widget is fully loaded
+
+#### Updating Payment Data
+
+You can update the payment details using events. For example, you can update the payment amount dynamically based on user input.
+
+TIP: You can hook this to your input element's `onChange` event.
+
+```javascript
+// Updating payment amount
+bankbox.$event.emit(bankbox.constants.sdkPaymentData, { amount: 1500 })
+```
+
+Here's an example of how to use the `onChange` event to update the payment amount:
+
+```jsx
+import React, { useState } from 'react'
+import BankboxManager from '@ravenpay/bankbox-me-sdk'
+
+const PaymentComponent = () => {
+  const [amount, setAmount] = useState(1000)
+  const bankbox = new BankboxManager({
+    appName: 'your-app-name',
+    environment: 'production',
+    widgetOptions: {
+      isPersistent: true,
+    },
+    onSuccess: (data) => {
+      console.log('Payment succeeded:', data)
+    },
+    onLoad: () => {
+      console.log('Bankbox is ready')
+    },
+    onError: (error) => {
+      console.error('An error occurred:', error)
+    },
+  })
+
+  const handleAmountChange = (event) => {
+    const newAmount = parseInt(event.target.value, 10)
+    setAmount(newAmount)
+    bankbox.$event.emit(bankbox.constants.sdkPaymentData, { amount: newAmount })
+  }
+
+  const handlePayment = () => {
+    bankbox.open({ amount })
+  }
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={amount}
+        onChange={handleAmountChange}
+        placeholder="Enter amount"
+      />
+      <button onClick={handlePayment}>Pay Now</button>
+    </div>
+  )
+}
+
+export default PaymentComponent
+```
 
 ## Troubleshooting
-### Widget not loading:
-- Check if the container element exists in the DOM
-- Verify network requests aren't blocked
-- Ensure correct environment configuration
 
-### Events not firing:
-- Verify origin matches your `appName` configuration
-- Check for console errors
-- Ensure event listeners are registered before mount
+### Widget Not Appearing
 
+Ensure that:
 
+- You've provided a valid `appName` and `environment`
+- The container element exists (if `containerId` is specified)
 
-## License
+### Payment Processing Issues
 
-MIT License. See [LICENSE](LICENSE) for details.
+If payments aren't processing correctly:
 
+- Verify the amount is in the correct format (smallest currency unit)
+- Ensure all required payment fields are provided
+- Check your callbacks are properly handling success and error cases
+- Check that `isBluethootConnected` returns `true` before attempting to process payment
 
+### Best Practices
 
+- Always check connection status before initiating payment flows
+- Implement proper error handling in your callbacks
+- Test thoroughly in development before moving to production
+- Provide clear feedback to users during or after the payment process
+- Hooking into the onSuccess & onFailure would allow take custom actions in your application based on transaction status

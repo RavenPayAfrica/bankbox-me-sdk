@@ -1,16 +1,21 @@
 import React, { useEffect, useRef } from 'react';
 import BankboxManager from '../../src/index';
+import $event from '../../src/eventWorker';
 // import BankboxManager from '@ravenpay/bankbox-me-sdk';
 
 const BankboxWidget: React.FC = () => {
   const bankbox = new BankboxManager({
     appName: 'lumi',
-    // environment: 'development',
+    environment: 'development',
     // containerId: 'bankbox-container',
     // widgetOptions: {
     //   theme: 'dark',
     //   paymentMethod: 'card'
     // },
+    widgetOptions: {
+      isPersistent: true,
+    },
+
     onSuccess: (data) => {
       console.log('Payment succeeded:', data);
     },
@@ -23,9 +28,12 @@ const BankboxWidget: React.FC = () => {
     }
   });
 
+     $event.subscribe("sdk:payment_data", (event) => {
+      console.log(event, "thadt evnt")
+     });
   function handleOpen() {
     const resp = bankbox.open({
-      email: ''
+      amount: 533
     });
 
 
@@ -47,7 +55,7 @@ const BankboxWidget: React.FC = () => {
         </button>
 
         <button onClick={() => (bankbox.$event.emit(bankbox.constants.sdkPaymentData, {amount: 1000}))}>
-          Check Connection
+          Update amount
         </button>
     </React.Fragment>
 };
