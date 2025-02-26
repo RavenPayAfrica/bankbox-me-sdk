@@ -7,7 +7,7 @@ interface WidgetOptions {
 
 export interface Config {
   appName: string;
-  environment?: 'sandbox' | 'production';
+  environment?: 'sandbox' | 'production' | 'development';
   widgetOptions?: WidgetOptions;
   containerId?: string;
   onBluethoothConnected?: (data: any) => void;
@@ -32,8 +32,8 @@ interface MountOptions {
   containerId?: string;
 }
 class BankboxManager {
-  private appName: string = 'bankly';
-  private environment?: 'development' | 'sandbox' | 'production' = 'production';
+  private appName;
+  private environment?: 'development' | 'sandbox' | 'production';
   private widgetOptions?: WidgetOptions;
   private containerId: string;
   private iframe: HTMLIFrameElement | null;
@@ -61,7 +61,7 @@ class BankboxManager {
     sdkPaymentData: "sdk:payment_data",
     systemReady: "sdk:system_ready",
     sdkClose: 'sdk:close',
-    appUrl: this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`
+    // appUrl: this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`
   }
   constructor(config: Config) {
     this.appName = config.appName;
@@ -82,14 +82,14 @@ class BankboxManager {
   private getTargetOrigin(params?:MountOptions): string {
 
     if (params && params.email){
-    return `${this.constants.appUrl}?email=${params.email}`;
+    return `${this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`}?email=${params.email}`;
     }
 
     if(params && params.amount){
-    return `${this.constants.appUrl}?amount=${params.amount}`;
+    return `${this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`}?amount=${params.amount}`;
     }
 
-    return `${this.constants.appUrl}`;
+    return `${this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`}`;
   }
   private registerCoreListeners(config: Config): void {
       if (config.onSuccess) eventWorker.subscribe(this.constants.success, (e) => config.onSuccess?.(e.detail));
@@ -216,7 +216,7 @@ class BankboxManager {
       this.iframe.style.height = '100%';
       this.iframe.style.border = 'none';
       this.iframe.src = this.getTargetOrigin(options);
-      this.iframe.allow = 'bluetooth';  // Allow Bluetooth
+      this.iframe.allow = 'bluetooth; usb';  // Allow Bluetooth and USB
 
       this.iframe.onload = () => {
         this.isInitialized = true;
@@ -330,10 +330,10 @@ class BankboxManager {
     this.isBluethoothConnected = true;
     this.initPayment(this.paymentOption);
   }
-  private handleIncomingMessage(event: MessageEvent): void {
+  private handleIncomingMessage(event:any): void {
     if (event.origin !== this.targetOrigin) return;
 
-    const message: Message = event.data
+    const message: Message = event.details ?? event.data;
     if (!message?.type) return;
 
     switch (message.type) {

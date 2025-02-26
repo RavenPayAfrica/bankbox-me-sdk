@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-// import BankboxManager from '../../dist';
-import BankboxManager from '@ravenpay/bankbox-me-sdk';
+import BankboxManager from '../../src/index';
+// import BankboxManager from '@ravenpay/bankbox-me-sdk';
 
 const BankboxWidget: React.FC = () => {
   const bankbox = new BankboxManager({
-    appName: 'bankly',
-    // environment: 'sandbox',
+    appName: 'lumi',
+    // environment: 'development',
     // containerId: 'bankbox-container',
     // widgetOptions: {
     //   theme: 'dark',
@@ -43,6 +43,10 @@ const BankboxWidget: React.FC = () => {
         </button>
 
         <button onClick={() => alert(`Bankbox is ${bankbox.$event ? 'connected' : 'disconnected'}`)}>
+          Check Connection
+        </button>
+
+        <button onClick={() => (bankbox.$event.emit(bankbox.constants.sdkPaymentData, {amount: 1000}))}>
           Check Connection
         </button>
     </React.Fragment>
