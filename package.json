@@ -1,6 +1,6 @@
 {
   "name": "@ravenpay/bankbox-me-sdk",
-  "version": "0.0.4",
+  "version": "0.1.23",
   "description": "Raven Bankbox JS Payment SDK",
   "keywords": [
     "raven",
@@ -46,33 +46,32 @@
   "license": "MIT",
   "engines": {
     "node": ">=8.5",
-    "npm": ">=6.0",
-    "yarn": "^1.0"
+    "npm": ">=6.0"
   },
   "scripts": {
     "cleanup": "shx rm -rf dist",
-    "prebuild": "yarn cleanup && yarn verify",
-    "build": "yarn build:tsc && yarn build:rollup",
+    "prebuild": "npm run cleanup && npm run verify",
+    "build": "npm run build:tsc && npm run build:rollup",
     "build:tsc": "tsc && tsc --target es2018 --outDir dist/esm2018",
     "build:rollup": "rollup -c config/rollup.config.mjs --bundleConfigAsCjs && rollup -c config/rollup.config.mjs --bundleConfigAsCjs --environment NODE_ENV:production",
-    "postbuild": "node scripts/copy && yarn size",
+    "postbuild": "node scripts/copy && npm run size",
     "docs": "typedoc --entryPoints src/index.ts --exclude '**/__tests__/**/*.*' --excludeExternals --excludePrivate --excludeNotDocumented --name 'Bankbox Me SDK' --out docs",
     "test": "jest -c ./config/jest.config.js",
     "test:watch": "npm t -- --watch",
     "test:coverage": "npm t -- --coverage",
     "test:ci": "npm t -- --ci",
     "validate-js": "tsc -p ./config  && tsc -p ./scripts",
-    "verify": "yarn style ",
+    "verify": "npm run style ",
     "commit": "git-cz",
-    "style": "yarn format && yarn lint",
-    "style:fix": "yarn format:fix && yarn lint:fix",
+    "style": "npm run format && npm run lint",
+    "style:fix": "npm run format:fix && npm run lint:fix",
     "format": "prettier \"**/*.{ts,tsx,js,jsx,css,scss,sass,less,md}\"",
-    "format:fix": "yarn format --write",
+    "format:fix": "npm run format --write",
     "lint": "eslint",
-    "lint:fix": "yarn lint --fix",
-    "prerelease": "yarn build",
+    "lint:fix": "npm run lint --fix",
+    "prerelease": "npm run build",
     "release": "standard-version",
-    "postrelease": "node scripts/copy && node scripts/build && yarn release:github && yarn release:npm",
+    "postrelease": "node scripts/copy && node scripts/build && npm run release:github && npm run release:npm",
     "release:github": "git push --no-verify --follow-tags origin master",
     "release:npm": "npm publish ./dist",
     "release:preflight": "npm pack ./dist --dry-run",
@@ -87,7 +86,7 @@
     "hooks": {
       "commit-msg": "commitlint --config config/commitlint.config.js -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged",
-      "pre-push": "yarn style && npm test -- --bail --onlyChanged"
+      "pre-push": "npm run style && npm test -- --bail --onlyChanged"
     }
   },
   "lint-staged": {
@@ -96,7 +95,7 @@
       "git add"
     ],
     "src/**/*.{ts,tsx}": [
-      "yarn lint:fix",
+      "npm run lint:fix",
       "git add"
     ]
   },
