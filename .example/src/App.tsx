@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import BankboxManager from '../../src/manager';
+// import BankboxManager from '../../dist';
+import BankboxManager from '@ravenpay/bankbox-me-sdk';
 
 const BankboxWidget: React.FC = () => {
   const bankbox = new BankboxManager({
@@ -21,11 +22,28 @@ const BankboxWidget: React.FC = () => {
       console.error('An error occurred:', error);
     }
   });
-  
+
+  function handleOpen() {
+    const resp = bankbox.open({
+      email: ''
+    });
+
+
+    console.log('Open response:', resp);
+  }
+
 
     return <React.Fragment>
-       <button onClick={() => bankbox.open({ email: "ayenikehinded4@gmail.com"})}>
+       <button onClick={() => handleOpen()}>
           Open
+        </button>
+
+        <button onClick={() => bankbox.$event.emit(bankbox.constants.success, 'That was a success')}>
+          sendSuccess
+        </button>
+
+        <button onClick={() => alert(`Bankbox is ${bankbox.$event ? 'connected' : 'disconnected'}`)}>
+          Check Connection
         </button>
     </React.Fragment>
 };
