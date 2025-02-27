@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.30](https://github.com/RavenPayAfrica/bankbox-me-sdk/compare/v0.1.29...v0.1.30) (2025-02-27)
+
+
+### Features
+
+* add persist true param on launch if isPersistent is true ([3b3b6cf](https://github.com/RavenPayAfrica/bankbox-me-sdk/commit/3b3b6cf968a760993168378085db909c10d348d7))
+* updated documentation and fixes ([541d3b7](https://github.com/RavenPayAfrica/bankbox-me-sdk/commit/541d3b7c34b23b0653528f589907beb27959c2c9))
+
 ### [0.1.29](https://github.com/RavenPayAfrica/bankbox-me-sdk/compare/v0.1.28...v0.1.29) (2025-02-26)
 
 ### [0.1.28](https://github.com/RavenPayAfrica/bankbox-me-sdk/compare/v0.1.27...v0.1.28) (2025-02-26)
