@@ -1,4 +1,4 @@
-# Bankbox SDK Documentation
+# Bankbox Me SDK Documentation
 
 ## Table of Contents
 

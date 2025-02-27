@@ -79,17 +79,28 @@ class BankboxManager {
     // Register event listeners
     this.registerCoreListeners(config);
   }
-  private getTargetOrigin(params?:MountOptions): string {
+  private getTargetOrigin(params?: MountOptions): string {
+    let url = this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`;
 
-    if (params && params.email){
-    return `${this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`}?email=${params.email}`;
+    const queryParams: string[] = [];
+
+    if (params?.email) {
+      queryParams.push(`email=${params.email}`);
     }
 
-    if(params && params.amount){
-    return `${this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`}?amount=${params.amount}`;
+    if (params?.amount) {
+      queryParams.push(`amount=${params.amount}`);
     }
 
-    return `${this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`}`;
+    if (this.widgetOptions?.isPersistent) {
+      queryParams.push('persist=true');
+    }
+
+    if (queryParams.length > 0) {
+      url += `?${queryParams.join('&')}`;
+    }
+
+    return url;
   }
   private registerCoreListeners(config: Config): void {
       if (config.onSuccess) eventWorker.subscribe(this.constants.success, (e) => config.onSuccess?.(e.detail));
@@ -220,12 +231,12 @@ class BankboxManager {
 
       this.iframe.onload = () => {
         this.isInitialized = true;
-        this.dispatchEvent('load', null);
+        this.$event.emit('load', null);
         window.addEventListener('message', this.handleIncomingMessage.bind(this));
       };
 
       this.iframe.onerror = (error) => {
-        this.dispatchEvent('error', {
+        this.$event.emit('error', {
           type: 'iframe_error',
           message: 'Failed to load Bankbox iframe',
           error
@@ -344,13 +355,13 @@ class BankboxManager {
         this.handleBankboxReady();
         break;
       case 'rrn_data':
-        this.dispatchEvent(message.message?.status, message.data);
+        this.$event.emit(message.message?.status, message.data);
         break;
       case 'bankbox:close':
         this.close();
         break;
       default:
-        this.dispatchEvent(message.type, message.data);
+        this.$event.emit(message.type, message.data);
     }
   }
 
@@ -364,26 +375,9 @@ class BankboxManager {
     });
   }
 
-  public addEventListener(type: string, callback: (data: any) => void): void {
-    if (!this.messageHandlers.has(type)) {
-      this.messageHandlers.set(type, new Set());
-    }
-    this.messageHandlers.get(type)?.add(callback);
-  }
 
-  public removeEventListener(type: string, callback: (data: any) => void): void {
-    this.messageHandlers.get(type)?.delete(callback);
-  }
 
-  private dispatchEvent(type: string, data: any): void {
-    this.messageHandlers.get(type)?.forEach(handler => {
-      try {
-        handler(data);
-      } catch (error) {
-        console.error(`Error in ${type} handler:`, error);
-      }
-    });
-  }
+
   public sendMessage(message: Message): void {
     eventWorker.emit(message.type, message);
   }
