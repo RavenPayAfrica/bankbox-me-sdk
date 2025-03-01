@@ -1,12 +1,14 @@
-import React, { useEffect, useRef } from 'react';
-import BankboxManager from '../../src/index';
+import React, { useEffect, useRef, useState } from 'react';
+// import BankboxManager from '../../src/index';
 import $event from '../../src/eventWorker';
-// import BankboxManager from '@ravenpay/bankbox-me-sdk';
+import BankboxManager from '@ravenpay/bankbox-me-sdk/bundles/index.esm.js';
 
 const BankboxWidget: React.FC = () => {
+
+  const [amount, setAmount] = useState(0)
   const bankbox = new BankboxManager({
     appName: 'lumi',
-    environment: 'development',
+    environment: 'production',
     // containerId: 'bankbox-container',
     // widgetOptions: {
     //   theme: 'dark',
@@ -57,6 +59,24 @@ const BankboxWidget: React.FC = () => {
         <button onClick={() => (bankbox.$event.emit(bankbox.constants.sdkPaymentData, {amount: 1000}))}>
           Update amount
         </button>
+
+        <button onClick={() => {
+          bankbox.$event.emit(bankbox.constants.sdkPaymentData, {amount: amount})
+          bankbox.open()
+        }}>
+          Process Payment
+        </button>
+
+
+        <input
+        onChange={(e) =>
+        {
+
+
+          setAmount(Number(e.target.value))
+        }
+        }
+        />
     </React.Fragment>
 };
 

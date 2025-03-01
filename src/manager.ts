@@ -80,7 +80,7 @@ class BankboxManager {
     this.registerCoreListeners(config);
   }
   private getTargetOrigin(params?: MountOptions): string {
-    let url = this.environment === 'development' ? 'http://localhost:3000' : `https://${this.appName ?? 'bankly'}.bankbox.me`;
+    let url = this.environment === 'development' ? 'http://localhost:3000' : this.environment === 'sandbox' ? 'https://bankbox-me.netlify.app'  : `https://${this.appName ?? 'bankly'}.bankbox.me`;
 
     const queryParams: string[] = [];
 
