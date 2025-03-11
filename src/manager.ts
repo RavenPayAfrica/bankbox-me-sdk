@@ -3,6 +3,8 @@ import eventWorker from "./eventWorker";
 interface WidgetOptions {
   [key: string]: any;
   isPersistent?: boolean;
+  stream?: boolean
+  width?: string;
 }
 
 export interface Config {
@@ -95,6 +97,11 @@ class BankboxManager {
     if (this.widgetOptions?.isPersistent) {
       queryParams.push('persist=true');
     }
+    if (this.widgetOptions?.stream) {
+      queryParams.push('stream=true');
+    } else {
+      queryParams.push('stream=false');
+    }
 
     if (queryParams.length > 0) {
       url += `?${queryParams.join('&')}`;
@@ -134,13 +141,11 @@ class BankboxManager {
   private initWindowResizeListener(): void {
     // Add an event listener to the window resize event
     window.addEventListener('resize', () => {
-
-
       this.windowSize = {
-        width: window.innerWidth,
+        width: window.innerWidth ,
         height: window.innerHeight,}
         if(this.container){
-          this.container.style.width = (this.windowSize.width > 900) ?  '50%' : '100%';
+          this.container.style.width = this.widgetOptions?.width ? this.widgetOptions?.width : (this.windowSize.width > 900) ?  '50%' : '100%';
         }
     });
 
