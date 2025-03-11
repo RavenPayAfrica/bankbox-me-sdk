@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.35](https://github.com/RavenPayAfrica/bankbox-me-sdk/compare/v0.1.34...v0.1.35) (2025-03-11)
+
+
+### Features
+
+* improvement to manager ([9677684](https://github.com/RavenPayAfrica/bankbox-me-sdk/commit/9677684e77775d3c80b35abd957f81f4173666dc))
+* **widgetOptions:** added new widgetOptions params ([71ab44b](https://github.com/RavenPayAfrica/bankbox-me-sdk/commit/71ab44b8c70a4c62309783525c850cb0ecff4779))
+
 ### [0.1.34](https://github.com/RavenPayAfrica/bankbox-me-sdk/compare/v0.1.32...v0.1.34) (2025-02-27)
 
 ### [0.1.33](https://github.com/RavenPayAfrica/bankbox-me-sdk/compare/v0.1.32...v0.1.33) (2025-02-27)
