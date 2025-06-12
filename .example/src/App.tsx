@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';  
 // import BankboxManager from '../../src/index';
 import $event from '../../src/eventWorker';
 import BankboxManager from '@ravenpay/bankbox-me-sdk/bundles/index.esm.js';
@@ -39,7 +39,7 @@ const BankboxWidget: React.FC = () => {
     });
 
 
-    console.log('Open response:', resp);
+    // console.log('Open response:', resp);
   }
 
 
